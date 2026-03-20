@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ClaimsParser/ClaimsParser.csproj" Id="c0b0c58a-d6b4-4dfd-972e-836b817cc1dc" />
+  <Project Path="ClaimsParserTests/ClaimsParserTests.csproj" Id="cb11afb0-311d-4027-bcaf-5c00682b9129" />
+</Solution>
