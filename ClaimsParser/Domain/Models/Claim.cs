@@ -15,85 +15,56 @@ namespace ClaimsParser.Domain.Models
 
         private Claim() { }
 
-        public static Claim Create(string claimId, string memberId, string date, string amount, string category, string provider)
+        public static Result<Claim> Create(Dictionary<string, string> json)
         {
-            return new Claim()
+            if (!json.TryGetValue("claimId", out string? claimId) || string.IsNullOrEmpty(claimId))
             {
-                ClaimId = ValidateClaimId(claimId),
-                MemberId = ValidateMemberId(memberId),
-                Date = ValidateDate(date),
-                Amount = ValidateAmount(amount),
-                Category = ValidateCategory(category),
-                Provider = ValidateProvider(provider)
-            };
-        }
-
-        private static string ValidateClaimId(string claimId)
-        {
-            if (string.IsNullOrEmpty(claimId))
-            {
-                throw new ArgumentException("ClaimId error.", nameof(claimId));
+                return Result<Claim>.Fail("ClaimId error.");
             }
 
-            return claimId;
-        }
-
-        private static string ValidateMemberId(string memberId)
-        {
-            if (string.IsNullOrEmpty(memberId))
+            if (!json.TryGetValue("memberId", out string? memberId) || string.IsNullOrEmpty(memberId))
             {
-                throw new ArgumentException("MemberId error.", nameof(memberId));
+                return Result<Claim>.Fail("MemberId error.");
             }
 
-            return memberId;
-        }
-
-        private static DateTime ValidateDate(string date)
-        {
-            if (!DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateResult))
+            if (!json.TryGetValue("date", out string? date) ||
+                !DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateResult))
             {
-                throw new ArgumentException("Date error.", nameof(date));
+                return Result<Claim>.Fail("Date error.");
             }
             else if (dateResult > DateTime.Now)
             {
-                throw new ArgumentException("Date cannot be in the future.", nameof(date));
+                return Result<Claim>.Fail("Date cannot be in the future.");
             }
 
-            return dateResult;
-        }
-
-        private static decimal ValidateAmount(string amount)
-        {
-            if (!decimal.TryParse(amount, out decimal amountResult))
+            if (!json.TryGetValue("amount", out string? amount) || !decimal.TryParse(amount, out decimal amountResult))
             {
-                throw new ArgumentException("Amount error.", nameof(amount));
+                return Result<Claim>.Fail("Amount error.");
             }
             else if (amountResult < 0)
             {
-                throw new ArgumentException("Amount cannot be negative.", nameof(amount));
+                return Result<Claim>.Fail("Amount cannot be negative.");
             }
 
-            return amountResult;
-        }
-
-        private static string ValidateCategory(string category)
-        {
-            if (string.IsNullOrEmpty(category))
+            if (!json.TryGetValue("category", out string? category) || string.IsNullOrEmpty(category))
             {
-                throw new ArgumentException("Category error.", nameof(category));
+                return Result<Claim>.Fail("Category error.");
             }
 
-            return category;
-        }
-
-        private static string ValidateProvider(string provider)
-        {
-            if (string.IsNullOrEmpty(provider))
+            if (!json.TryGetValue("provider", out string? provider) || string.IsNullOrEmpty(provider))
             {
-                throw new ArgumentException("Provider error.", nameof(provider));
+                return Result<Claim>.Fail("Provider error.");
             }
 
-            return provider;
+            return Result<Claim>.Ok(new Claim()
+            {
+                ClaimId = claimId,
+                MemberId = memberId,
+                Date = dateResult,
+                Amount = amountResult,
+                Category = category,
+                Provider = provider
+            });
         }
     }
 }
