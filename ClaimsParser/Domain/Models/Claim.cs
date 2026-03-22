@@ -13,6 +13,10 @@ namespace ClaimsParser.Domain.Models
         public string Category { get; private set; } = string.Empty;
         public string Provider { get; private set; } = string.Empty;
 
+        public decimal ReimbursementAmount { get; init; } = decimal.Zero;
+        public string ReimbursementRule { get; init; } = string.Empty;
+        public string ReimbursementStatus { get; init; } = string.Empty;
+
         private Claim() { }
 
         public static Result<Claim> Create(Dictionary<string, string> json)

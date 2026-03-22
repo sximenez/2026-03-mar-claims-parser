@@ -2,8 +2,8 @@ namespace ClaimsParser.Domain.Models
 {
     internal record Result<T>
     {
-        public bool IsSuccess { get; private set; }
-        public T? Value { get; private set; }
+        public bool IsSuccess { get; private set; } = false;
+        public T? Value { get; private set; } = default;
         public string? Error { get; private set; } = string.Empty;
 
         private Result() { }
